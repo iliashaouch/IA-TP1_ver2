@@ -52,10 +52,23 @@ namespace IA_TP1
         public static void RobotThread()
         {
             Robot robot = new Robot();
-            while (true)
-            {
-
-            }
+            int[] p = { 0, 0 };
+            robot.Position = p;
+            room[,] exemple = new room[2,2];
+            exemple[0, 0].hasDirt = false;
+            exemple[0, 0].hasBijoux = false;
+            exemple[1, 0].hasDirt = false;
+            exemple[1, 0].hasBijoux = false;
+            exemple[0, 1].hasDirt = false;
+            exemple[0, 1].hasBijoux = false;
+            exemple[1, 0].hasDirt = false;
+            exemple[1, 0].hasBijoux = false;
+            exemple[1, 1].hasDirt = true;
+            exemple[1, 1].hasBijoux = false;
+            robot.Memoire = exemple;
+            Console.WriteLine(robot.search());
+            string verif;
+            verif = Console.ReadLine();    //Console attend enter avant de fermer 
         }
     }
 }
