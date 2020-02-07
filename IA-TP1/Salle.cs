@@ -46,6 +46,8 @@ namespace IA_TP1
     class Manoire
     {
         private Salle[,] salles = new Salle[5, 5];
+        private UInt16 nbBijouxAspires = 0;
+
 
         public Manoire()
         {
@@ -76,6 +78,8 @@ namespace IA_TP1
 
         public void cleanRoom(int[] s)
         {
+            if (salles[s[0], s[1]].getBijoux) { ++nbBijouxAspires; }
+
             salles[s[0], s[1]].setBijoux(false);
             salles[s[0], s[1]].setDirt(false);
         }

@@ -9,6 +9,7 @@ namespace IA_TP1
 {
     static class Program
     {
+        static Manoire theManoire = new Manoire();
         /// <summary>
         /// Point d'entrée principal de l'application.
         /// </summary>
@@ -36,14 +37,14 @@ namespace IA_TP1
 
         public static void ManoireThread()
         {
-            Manoire manoire = new Manoire();
+            //Manoire manoire = new Manoire();
             long lastDate = DateTime.Now.Ticks;
 
             while (true)
             {
                 if (DateTime.Now.Ticks - lastDate > TimeSpan.TicksPerSecond)
                 {
-                    manoire.createObject();
+                    theManoire.createObject();
                     lastDate = DateTime.Now.Ticks;
                 }
             }
@@ -51,24 +52,26 @@ namespace IA_TP1
 
         public static void RobotThread()
         {
-            Robot robot = new Robot();
-            int[] p = { 0, 0 };
-            robot.Position = p;
-            room[,] exemple = new room[2,2];
-            exemple[0, 0].hasDirt = false;
-            exemple[0, 0].hasBijoux = false;
-            exemple[1, 0].hasDirt = false;
-            exemple[1, 0].hasBijoux = false;
-            exemple[0, 1].hasDirt = false;
-            exemple[0, 1].hasBijoux = false;
-            exemple[1, 0].hasDirt = false;
-            exemple[1, 0].hasBijoux = false;
-            exemple[1, 1].hasDirt = true;
-            exemple[1, 1].hasBijoux = false;
-            robot.Memoire = exemple;
-            Console.WriteLine(robot.search());
-            string verif;
-            verif = Console.ReadLine();    //Console attend enter avant de fermer 
+            Robot robot = new Robot(theManoire );
+            //int[] p = { 0, 0 };
+            //robot.Position = p;
+            //room[,] exemple = new room[2,2];
+            //exemple[0, 0].hasDirt = false;
+            //exemple[0, 0].hasBijoux = false;
+            //exemple[1, 0].hasDirt = false;
+            //exemple[1, 0].hasBijoux = false;
+            //exemple[0, 1].hasDirt = false;
+            //exemple[0, 1].hasBijoux = false;
+            //exemple[1, 0].hasDirt = false;
+            //exemple[1, 0].hasBijoux = false;
+            //exemple[1, 1].hasDirt = true;
+            //exemple[1, 1].hasBijoux = false;
+            //robot.Memoire = exemple;
+            //Console.WriteLine(robot.search());
+            //string verif;
+            //verif = Console.ReadLine();    //Console attend enter avant de fermer 
+
+            robot.startLifeCycle();
         }
     }
 }
