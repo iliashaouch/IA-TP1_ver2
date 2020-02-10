@@ -16,10 +16,6 @@ namespace IA_TP1
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
-
             ThreadStart childref1 = new ThreadStart(ManoireThread);
             Console.WriteLine("In Main: Creating the manoire's thread");
 
@@ -32,6 +28,9 @@ namespace IA_TP1
             Thread robot = new Thread(childref2);
             robot.Start();
 
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new Form1());
         }
 
 

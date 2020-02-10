@@ -60,8 +60,10 @@ namespace IA_TP1
                 foreach (char action in actionspossible)
                 {
                     noeud node = new noeud();
+                    node.actions = "";
+                    node.pos = new int[2];
+                    Array.Copy(graph[0].pos, node.pos, graph[0].pos.Length);
                     node.actions = graph[0].actions + action;
-                    node.pos = graph[0].pos;
                     switch (action)
                     {
                         case 'h':
@@ -157,7 +159,7 @@ namespace IA_TP1
         public string getAllPossibleActions(int[] pos)
         {
             string actions = "ar";
-            if (pos[0] < memoire.GetLength(0))
+            if (pos[0] < memoire.GetLength(0) - 1)
             {
                 actions += 'b';
             }
@@ -165,7 +167,7 @@ namespace IA_TP1
             {
                 actions += 'h';
             }
-            if (pos[1] < memoire.GetLength(1))
+            if (pos[1] < memoire.GetLength(1) - 1)
             {
                 actions += 'd';
             }
