@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 namespace IA_TP1
 {
 
+    // La structure noeud décrit un des noeuds de notre graph, elle est composée d'un string "actions" correspondant à la liste des actions entreprises
+    // pour arriver à ce noeud, du tableau d'entier "pos" qui indique la position du robot à la fin de la séquence d'action (via 2 entiers), 
+    // de deux listes de tableaux d'entiers "dirtLeft" et "bijouLeft" qui répertorie les positions respectivement des saletés et de bijoux restant
+    // après la séquance d'action de ce noeud et enfin un int "heuristic" qui correspond à l'heuristique de ce noeud dans le cadre de l'algorithme A*
     public struct noeud
     {
         public string actions;
@@ -37,6 +41,8 @@ namespace IA_TP1
             e = new effecteur(m_manoir);
         }
 
+        // cette fonction permet de déterminer quelle algorithme sera utilisé par le programme via un booléen (si le paramètre entré est "true" alors 
+        // l'algorithme utilisera A*, sinon il utilisera BFS (Breadth First Search)
         public void setMode(bool mode)
         {
             robotMode = mode;
@@ -50,6 +56,8 @@ namespace IA_TP1
             }
         }
 
+        // Cette fonction est la fonction de vie du robot, elle boucle en permanance et répète les étapes : 
+        // "observer l'environnement et mettre à jour mon état interne" ==> "Choisir une série d'action" ==> "executer la série d'action"
         public void startLifeCycle()
         {
             while (true)
@@ -65,22 +73,8 @@ namespace IA_TP1
         public room[,] Memoire { get => memoire; set => memoire = value; }
         public int[] Position { get => position; set => position = value; }
 
-        public int compare2Nodes(noeud n2, noeud n1)
-        {
-            if (n1.heuristic == n2.heuristic)
-            {
-                return 0;
-            }
-            else if (n1.heuristic < n2.heuristic)
-            {
-                return 1;
-            }
-            else
-            {
-                return -1;
-            }
-        }
-
+        // La fonction "FindAllDirt" prend en paramètre une représentation du manoir et rend la liste des positions des saletés dans le manoir
+        // sous la forme d'une liste de tableaux d'entiers : List<int[]>
         public List<int[]> FindAllDirt(room[,] memoire)
         {
             List<int[]> res = new List<int[]>();
@@ -98,6 +92,8 @@ namespace IA_TP1
             return res;
         }
 
+        // La fonction "FindAllBijou" prend en paramètre une représentation du manoir et rend la liste des positions des bijoux dans le manoir
+        // sous la forme d'une liste de tableaux d'entiers : List<int[]>
         public List<int[]> FindAllBijou(room[,] memoire)
         {
             List<int[]> res = new List<int[]>();
@@ -115,14 +111,17 @@ namespace IA_TP1
             return res;
         }
 
+        // La fonction "findHeuristic" prend un paramètre un noeud et rend sa valeur d'heuristique, elle est égale à la somme du nombre de bijoux 
+        // et de saleté restants dans le manoir à la suite de sa séquence d'actions
         public int findHeuristic(noeud n)
         {
             return (n.bijouLeft.Count + n.dirtLeft.Count);
         }
 
-
+        // La fonction "AStarSearch" rend la série d'actions à effectuer par le robot pour nettoyer le manoire, elle la trouve en utiisant l'algorithme A*
         public string AStarSearch()
         {
+            // on créer le graph qui servira aussi de file d'attente pour les noeuds à explorer et le premier noeud et on ajoute le premier noeud au graph
             List<noeud> graph = new List<noeud>();
             noeud n = new noeud();
             n.actions = "";
@@ -130,13 +129,14 @@ namespace IA_TP1
             n.bijouLeft = FindAllBijou(memoire);
             n.dirtLeft = FindAllDirt(memoire);
             n.heuristic = findHeuristic(n);
-
             graph.Add(n);
+            // on test le noeud original pour savoir si des actions sont nécessaires 
             bool solutionFound = testSolution(graph[0].actions);
-            while (!solutionFound)
+            while (!solutionFound) // tant que la solution n'est pas trouvé
             {
+                // on cherche toutes les actions possibles à partir du noeud étudié
                 string actionspossible = getAllPossibleActions(graph[0].pos, graph[0].dirtLeft, graph[0].bijouLeft);
-                foreach (char action in actionspossible)
+                foreach (char action in actionspossible) // pour chacune de ces actions on créer un nouveau noeud
                 {
                     noeud node = new noeud();
                     node.actions = "";
@@ -163,18 +163,19 @@ namespace IA_TP1
                         case 'a':
                             if (listContains(node.dirtLeft, node.pos))
                             {
-                                listRemove(node.dirtLeft, node.pos) ;
-                                node.heuristic = findHeuristic(node);
+                                listRemove(node.dirtLeft, node.pos) ; // si on aspire des saletés on met à jour la liste de saletés restantes
+                                node.heuristic = findHeuristic(node); // et on met à jour l'heuristique du noeud
                             }
                             break;
                         case 'r':
                             if (listContains(node.bijouLeft, node.pos))
                             {
-                                listRemove(node.bijouLeft, node.pos);
-                                node.heuristic = findHeuristic(node);
+                                listRemove(node.bijouLeft, node.pos); // si on aspire des saletés on met à jour la liste de saletés restantes
+                                node.heuristic = findHeuristic(node); // et on met à jour l'heuristique du noeud
                             }
                             break;
                     }
+                    // ensuite on parcour le graph et on ajoute le noeud au bon endroit (avant tous les noeud qui on une heurisitque moins bonne que la sienne)
                     for (int i = 0; i < graph.Count; i++)
                     {
                         if (i >= graph.Count - 1)
@@ -190,13 +191,17 @@ namespace IA_TP1
                         }
                     }
                 }
+                // après avoir obtenus tous les noeuds fils du noeud parent on supprime le noeud parent
                 graph.RemoveAt(0);
-                //graph.Sort(compare2Nodes);
+                // on test le nouveau noeud se trouvant en tête de la file d'attente des noeuds à explorer (graph)
                 solutionFound = testSolution(graph[0].actions);
             }
+            // une fois que l'on a trouvé une bonne solution on rend la liste d'actions correspondant
             return (graph[0].actions);
         }
 
+        // La fonction "listContains" prend en paramètre une liste de tableaux d'entier et un tableau d'entier et rend "true" si la liste contient 
+        // ce tableau et "false" dans le cas contraire
         public bool listContains(List<int[]> l, int[] pos)
         {
             foreach (int[] e in l){
@@ -208,6 +213,7 @@ namespace IA_TP1
             return false;
         }
 
+        // La fonction "listRemove" prend en paramètre une liste de tableaux d'entier et un tableau d'entier et supprime ce tableau de la liste à sa première apparition
         public void listRemove(List<int[]> l, int[] pos)
         {
             int a = 0;
@@ -223,9 +229,11 @@ namespace IA_TP1
         }
 
 
-
+        // La fonction "Search" rend la série d'actions à effectuer par le robot pour nettoyer le manoire, elle la trouve en utiisant 
+        // l'algorithme BFS (Breadth First Search)
         public string search()
         {
+            // on créer le graph qui servira aussi de file d'attente pour les noeuds à explorer et le premier noeud et on ajoute le premier noeud au graph
             List<noeud> graph = new List<noeud>();
             noeud n = new noeud();
             n.actions = "";
@@ -233,11 +241,13 @@ namespace IA_TP1
             n.bijouLeft = FindAllBijou(memoire);
             n.dirtLeft = FindAllDirt(memoire);
             graph.Add(n);
+            // on test le noeud original pour savoir si des actions sont nécessaires 
             bool solutionFound = testSolution(graph[0].actions);
             while (!solutionFound)
             {
+                // on cherche toutes les actions possibles à partir du noeud étudié
                 string actionspossible = getAllPossibleActions(graph[0].pos, graph[0].dirtLeft, graph[0].bijouLeft);
-                foreach (char action in actionspossible)
+                foreach (char action in actionspossible) // pour chacune de ces actions on créer un nouveau noeud
                 {
                     noeud node = new noeud();
                     node.actions = "";
@@ -263,47 +273,30 @@ namespace IA_TP1
                         case 'a':
                             if (listContains(node.dirtLeft, node.pos))
                             {
-                                listRemove(node.dirtLeft, node.pos);
+                                listRemove(node.dirtLeft, node.pos); // si on aspire des saletés on met à jour la liste de saletés restantes
                             }
                             break;
                         case 'r':
                             if (listContains(node.bijouLeft, node.pos))
                             {
-                                listRemove(node.bijouLeft, node.pos);
+                                listRemove(node.bijouLeft, node.pos); // si on aspire des bijoux on met à jour la liste de saletés restantes
                             }
                             break;
                     }
+                    // ensuite on ajoute le noeud à la fin du graph
                     graph.Add(node);
                 }
+                // après avoir obtenus tous les noeuds fils du noeud parent on supprime le noeud parent
                 graph.RemoveAt(0);
+                // on test le nouveau noeud se trouvant en tête de la file d'attente des noeuds à explorer (graph)
                 solutionFound = testSolution(graph[0].actions);
             }
+            // une fois que l'on a trouvé une bonne solution on rend la liste d'actions correspondant
             return (graph[0].actions);
         }
 
-        void execActions(string strActions)
-        {
-            foreach (char action in strActions)
-            {
-                System.Threading.Thread.Sleep(1000);
-                switch (action)
-                {
-                    case 'h':
-                    case 'b':
-                    case 'g':
-                    case 'd':
-                        position = e.deplacer(action, position);
-                        break;
-                    case 'a':
-                        e.aspirer(position);
-                        break;
-                    case 'r':
-                        e.ramasser(position);
-                        break;
-                }
-            }
-        }
-
+        // La fonction "testSolution" prend en paramètre un string correspondant à une série d'action et retourne vraie si cette série d'action permet 
+        // de nettoyer le manoir et faux dans le cas contraire
         public bool testSolution(string solution)
         {
             room[,] state = new room[Memoire.GetLength(0), Memoire.GetLength(1)];
@@ -351,6 +344,9 @@ namespace IA_TP1
             return true;
         }
 
+        // La fonction "getAllPossibleActions" prend en paramètres un tableau d'entier indiquant la position actuel du robot ansi que deux 
+        // listes de tableaux indiquant respectivement les positions des saletés et des bijoux dans la manoir et rend un string correspondant
+        // à la liste des actions réalisable par le robot dans sa situation
         public string getAllPossibleActions(int[] pos, List<int[]> dirts, List<int[]> bijoux)
         {
             if (listContains(bijoux,pos))
@@ -379,6 +375,30 @@ namespace IA_TP1
                 actions += 'g';
             }
             return actions;
+        }
+
+        // La fonction "execActions" prend en paramètre une série d'action et les exécutes en communiquant avec les fonction de la classe "effecteur"
+        void execActions(string strActions)
+        {
+            foreach (char action in strActions)
+            {
+                System.Threading.Thread.Sleep(1000);
+                switch (action)
+                {
+                    case 'h':
+                    case 'b':
+                    case 'g':
+                    case 'd':
+                        position = e.deplacer(action, position);
+                        break;
+                    case 'a':
+                        e.aspirer(position);
+                        break;
+                    case 'r':
+                        e.ramasser(position);
+                        break;
+                }
+            }
         }
 
     }
