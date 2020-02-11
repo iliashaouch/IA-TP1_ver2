@@ -285,6 +285,7 @@ namespace IA_TP1
         {
             foreach (char action in strActions)
             {
+                System.Threading.Thread.Sleep(1000);
                 switch (action)
                 {
                     case 'h':
