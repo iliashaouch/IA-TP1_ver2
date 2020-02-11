@@ -9,68 +9,54 @@ namespace IA_TP1
 {
     static class Program
     {
-        static Manoire theManoire = new Manoire();
+        public static Manoire theManoire = new Manoire();
+        public static Robot robot = new Robot(theManoire);
         /// <summary>
         /// Point d'entrée principal de l'application.
         /// </summary>
         [STAThread]
         static void Main()
         {
+            //creation du Thread pour le manoire
             ThreadStart childref1 = new ThreadStart(ManoireThread);
-            Console.WriteLine("In Main: Creating the manoire's thread");
-
             Thread manoire = new Thread(childref1);
+            Console.WriteLine("In Main: Creating the manoire's thread");
             manoire.Start();
 
+            //creation du Thread pour le Robot
             ThreadStart childref2 = new ThreadStart(RobotThread);
-            Console.WriteLine("In Main: Creating the robot's thread");
-
             Thread robot = new Thread(childref2);
+            Console.WriteLine("In Main: Creating the robot's thread");
             robot.Start();
 
+            //Creation de l'UI
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
         }
 
-
+        /// <summary>
+        /// methode de creation du Thread Manoire
+        /// </summary>
         public static void ManoireThread()
         {
-            //Manoire manoire = new Manoire();
-            long lastDate = DateTime.Now.Ticks;
-
+            long lastDate = DateTime.Now.Ticks; //recupere le temps
             while (true)
             {
-                if (DateTime.Now.Ticks - lastDate > TimeSpan.TicksPerSecond)
+                if (DateTime.Now.Ticks - lastDate > 1 * TimeSpan.TicksPerSecond) //si plus de 1 sec depuis derniere boucle
                 {
-                    theManoire.createObject();
+                    theManoire.createObject(); //ajjout d'une poussiere ou d'un bijou
                     lastDate = DateTime.Now.Ticks;
                 }
             }
         }
 
+        /// <summary>
+        /// methode de creation du Thread Robot
+        /// </summary>
         public static void RobotThread()
         {
-            Robot robot = new Robot(theManoire );
-            //int[] p = { 0, 0 };
-            //robot.Position = p;
-            //room[,] exemple = new room[2,2];
-            //exemple[0, 0].hasDirt = false;
-            //exemple[0, 0].hasBijoux = false;
-            //exemple[1, 0].hasDirt = false;
-            //exemple[1, 0].hasBijoux = false;
-            //exemple[0, 1].hasDirt = false;
-            //exemple[0, 1].hasBijoux = false;
-            //exemple[1, 0].hasDirt = false;
-            //exemple[1, 0].hasBijoux = false;
-            //exemple[1, 1].hasDirt = true;
-            //exemple[1, 1].hasBijoux = false;
-            //robot.Memoire = exemple;
-            //Console.WriteLine(robot.search());
-            //string verif;
-            //verif = Console.ReadLine();    //Console attend enter avant de fermer 
-
-            robot.startLifeCycle();
+            robot.startLifeCycle(); //demare le Robot
         }
     }
 }
