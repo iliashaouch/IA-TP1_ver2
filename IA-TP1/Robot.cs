@@ -135,7 +135,7 @@ namespace IA_TP1
             bool solutionFound = testSolution(graph[0].actions);
             while (!solutionFound)
             {
-                string actionspossible = getAllPossibleActions(graph[0].pos);
+                string actionspossible = getAllPossibleActions(graph[0].pos, graph[0].dirtLeft, graph[0].bijouLeft);
                 foreach (char action in actionspossible)
                 {
                     noeud node = new noeud();
@@ -161,16 +161,16 @@ namespace IA_TP1
                             node.pos[1] += 1;
                             break;
                         case 'a':
-                            if (node.dirtLeft.Contains(node.pos))
+                            if (listContains(node.dirtLeft, node.pos))
                             {
-                                node.dirtLeft.Remove(node.pos);
+                                listRemove(node.dirtLeft, node.pos) ;
                                 node.heuristic = findHeuristic(node);
                             }
                             break;
                         case 'r':
-                            if (node.bijouLeft.Contains(node.pos))
+                            if (listContains(node.bijouLeft, node.pos))
                             {
-                                node.bijouLeft.Remove(node.pos);
+                                listRemove(node.bijouLeft, node.pos);
                                 node.heuristic = findHeuristic(node);
                             }
                             break;
@@ -197,6 +197,32 @@ namespace IA_TP1
             return (graph[0].actions);
         }
 
+        public bool listContains(List<int[]> l, int[] pos)
+        {
+            foreach (int[] e in l){
+                if (e[0]==pos[0] && e[1] == pos[1])
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void listRemove(List<int[]> l, int[] pos)
+        {
+            int a = 0;
+            for (int i=0; i<l.Count;i++)
+            {
+                if (l[i][0] == pos[0] && l[i][1] == pos[1])
+                {
+                    a = i;
+                    break;
+                }
+            }
+            l.RemoveAt(a);
+        }
+
+
 
         public string search()
         {
@@ -204,17 +230,21 @@ namespace IA_TP1
             noeud n = new noeud();
             n.actions = "";
             n.pos = position;
+            n.bijouLeft = FindAllBijou(memoire);
+            n.dirtLeft = FindAllDirt(memoire);
             graph.Add(n);
             bool solutionFound = testSolution(graph[0].actions);
             while (!solutionFound)
             {
-                string actionspossible = getAllPossibleActions(graph[0].pos);
+                string actionspossible = getAllPossibleActions(graph[0].pos, graph[0].dirtLeft, graph[0].bijouLeft);
                 foreach (char action in actionspossible)
                 {
                     noeud node = new noeud();
                     node.actions = "";
                     node.pos = new int[2];
                     Array.Copy(graph[0].pos, node.pos, graph[0].pos.Length);
+                    node.bijouLeft = new List<int[]>(graph[0].bijouLeft);
+                    node.dirtLeft = new List<int[]>(graph[0].dirtLeft);
                     node.actions = graph[0].actions + action;
                     switch (action)
                     {
@@ -229,6 +259,18 @@ namespace IA_TP1
                             break;
                         case 'd':
                             node.pos[1] += 1;
+                            break;
+                        case 'a':
+                            if (listContains(node.dirtLeft, node.pos))
+                            {
+                                listRemove(node.dirtLeft, node.pos);
+                            }
+                            break;
+                        case 'r':
+                            if (listContains(node.bijouLeft, node.pos))
+                            {
+                                listRemove(node.bijouLeft, node.pos);
+                            }
                             break;
                     }
                     graph.Add(node);
@@ -308,9 +350,17 @@ namespace IA_TP1
             return true;
         }
 
-        public string getAllPossibleActions(int[] pos)
+        public string getAllPossibleActions(int[] pos, List<int[]> dirts, List<int[]> bijoux)
         {
-            string actions = "ar";
+            if (listContains(bijoux,pos))
+            {
+                return "r";
+            }
+            if (listContains(dirts, pos))
+            {
+                return "a";
+            }
+            string actions = "";
             if (pos[0] < memoire.GetLength(0) - 1)
             {
                 actions += 'b';
