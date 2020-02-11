@@ -31,7 +31,12 @@ namespace IA_TP1
             timer.Tick += new EventHandler(autoRefresh);
             timer.Start();
         }
-        
+
+        private void TableLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
         /// <summary>
         /// modifie l'affichage des salles selon leur etat
         /// </summary>
