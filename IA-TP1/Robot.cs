@@ -27,6 +27,8 @@ namespace IA_TP1
         private Manoire m_manoir;
         private string actionsList;
 
+        private bool robotMode;
+
         public Robot(Manoire manoir)
         {
             position = new[] { 0, 0 };
@@ -35,13 +37,25 @@ namespace IA_TP1
             e = new effecteur(m_manoir);
         }
 
+        public void setMode(bool mode)
+        {
+            robotMode = mode;
+            if (robotMode)
+            {
+                Console.WriteLine("AStar");
+            }
+            else
+            {
+                Console.WriteLine("BFS");
+            }
+        }
+
         public void startLifeCycle()
         {
             while (true)
             {
                 memoire = c.captureEnv();
-                actionsList = AStarSearch();
-                //actionsList = search();
+                actionsList = !robotMode ? search() : AStarSearch();
                 execActions(actionsList);
             }
         }

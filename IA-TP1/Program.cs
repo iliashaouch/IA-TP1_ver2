@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
@@ -17,6 +18,11 @@ namespace IA_TP1
         [STAThread]
         static void Main()
         {
+            string robMode = "";
+            Console.WriteLine("Indiquez le type du robot, BFS (0) ou AStar (1) : ");
+            robMode = Console.ReadLine();
+            if(robMode == "0") { Program.robot.setMode(false); }
+            else { Program.robot.setMode(true); }
             //creation du Thread pour le manoire
             ThreadStart childref1 = new ThreadStart(ManoireThread);
             Thread manoire = new Thread(childref1);
