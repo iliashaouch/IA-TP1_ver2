@@ -12,75 +12,70 @@ namespace IA_TP1
 {
     public partial class Form1 : Form
     {
-        private int[] posRob = new int[2];
+        private int[] posRob = new int[2]; //memoire de la position du robot
+                                           //afin d'effacer la derniere position du robot
         public Form1()
         {
-            InitializeComponent();
+            InitializeComponent(); //creation du Form (auto-genere)
 
+            //affichage de la situation initiale
             Program.robot.Position.CopyTo(posRob,0);
             printRobot();
             SetSalle(Program.theManoire.getState());
 
-            Timer timer = new Timer();
-            timer.Interval = (1 * 100);
+            //creation de la clock pour auto-refresh
+            Timer timer = new Timer
+            {
+                Interval = (int)(0.1 * 1000) //refresh toutes les 0.1 sec
+            };
             timer.Tick += new EventHandler(autoRefresh);
             timer.Start();
         }
-
-        private void TableLayoutPanel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void test()
-        {
-            Robot robot = new Robot(new Manoire());
-            int[] p = { 0, 0 };
-            robot.Position = p;
-            room[,] exemple = new room[2, 2];
-            exemple[0, 0].hasDirt = false;
-            exemple[0, 0].hasBijoux = false;
-            exemple[1, 0].hasDirt = false;
-            exemple[1, 0].hasBijoux = false;
-            exemple[0, 1].hasDirt = false;
-            exemple[0, 1].hasBijoux = false;
-            exemple[1, 0].hasDirt = false;
-            exemple[1, 0].hasBijoux = false;
-            exemple[1, 1].hasDirt = true;
-            exemple[1, 1].hasBijoux = false;
-            robot.Memoire = exemple;
-            Console.WriteLine(robot.search());
-            string verif;
-            verif = Console.ReadLine();    //Console attend enter avant de fermer 
-        }
-
+        
+        /// <summary>
+        /// modifie l'affichage des salles selon leur etat
+        /// </summary>
+        /// <param name="rooms">matrice des sallles du manoire</param>
         private void SetSalle(room[,] rooms)
         {
             for (int i = 0; i < rooms.GetLength(0); i++)
             {
                 for (int j = 0; j < rooms.GetLength(1); j++)
                 {
-                    if (rooms[i, j].hasDirt && rooms[i, j].hasBijoux) tableLayoutPanel1.GetControlFromPosition(i, j).BackColor = Color.DarkViolet;
-                    else if (rooms[i, j].hasBijoux) tableLayoutPanel1.GetControlFromPosition(i, j).BackColor = Color.Blue;
-                    else if (rooms[i, j].hasDirt) tableLayoutPanel1.GetControlFromPosition(i, j).BackColor = Color.Red;
-                    else tableLayoutPanel1.GetControlFromPosition(i, j).BackColor = Color.White;
+                    if (rooms[i, j].hasDirt && rooms[i, j].hasBijoux) tableLayoutPanel1.GetControlFromPosition(i, j).BackColor = Color.DarkViolet; //bijoux+poussiere
+                    else if (rooms[i, j].hasBijoux) tableLayoutPanel1.GetControlFromPosition(i, j).BackColor = Color.Blue; //bijoux
+                    else if (rooms[i, j].hasDirt) tableLayoutPanel1.GetControlFromPosition(i, j).BackColor = Color.Red; //poussiere
+                    else tableLayoutPanel1.GetControlFromPosition(i, j).BackColor = Color.White; //vide
                 }
             }
         }
 
+        /// <summary>
+        /// modifie l'affichage du robot
+        /// </summary>
         private void printRobot()
         {
-            tableLayoutPanel1.GetControlFromPosition(posRob[0], posRob[1]).Text = "";
-            Program.robot.Position.CopyTo(posRob, 0);
-            tableLayoutPanel1.GetControlFromPosition(posRob[0], posRob[1]).Text = "X";
+            tableLayoutPanel1.GetControlFromPosition(posRob[0], posRob[1]).Text = ""; //efface la derniere position connue du Robot
+            Program.robot.Position.CopyTo(posRob, 0); //recupere la nouvelle position
+            tableLayoutPanel1.GetControlFromPosition(posRob[0], posRob[1]).Text = "X"; //print
         }
 
+        /// <summary>
+        /// refresh manuel via le bouton
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void refresh_Click(object sender, EventArgs e)
         {
             SetSalle(Program.theManoire.getState());
             printRobot();
         }
 
+        /// <summary>
+        /// auto refresh via le Timer
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void autoRefresh(object sender, EventArgs e)
         {
             SetSalle(Program.theManoire.getState());
