@@ -9,7 +9,8 @@ namespace IA_TP1
 {
     static class Program
     {
-        static Manoire theManoire = new Manoire();
+        public static Manoire theManoire = new Manoire();
+        public static Robot robot = new Robot(theManoire);
         /// <summary>
         /// Point d'entrée principal de l'application.
         /// </summary>
@@ -51,7 +52,7 @@ namespace IA_TP1
 
         public static void RobotThread()
         {
-            Robot robot = new Robot(theManoire );
+            //Robot robot = new Robot(theManoire);
             //int[] p = { 0, 0 };
             //robot.Position = p;
             //room[,] exemple = new room[2,2];

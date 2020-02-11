@@ -12,26 +12,19 @@ namespace IA_TP1
 {
     public partial class Form1 : Form
     {
-        private room[,] exemple;
+        private int[] posRob = new int[2];
         public Form1()
         {
             InitializeComponent();
-            Random rand = new Random();
-            exemple = new room[5, 5];
-            for (int i = 0; i < exemple.GetLength(0); i++)
-            {
-                for (int j = 0; j < exemple.GetLength(1); j++)
-                {
-                    exemple[i, j].hasDirt = rand.Next() % 2 == 0;
-                    exemple[i, j].hasBijoux = rand.Next() % 3 == 0;
-                }
-            }
-            test2(exemple);
-        }
 
-        private void Button1_Click(object sender, EventArgs e)
-        {
+            Program.robot.Position.CopyTo(posRob,0);
+            printRobot();
+            SetSalle(Program.theManoire.getState());
 
+            Timer timer = new Timer();
+            timer.Interval = (1 * 100);
+            timer.Tick += new EventHandler(autoRefresh);
+            timer.Start();
         }
 
         private void TableLayoutPanel1_Paint(object sender, PaintEventArgs e)
@@ -39,14 +32,9 @@ namespace IA_TP1
 
         }
 
-        private void PictureBox1_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void test()
         {
-            Robot robot = new Robot();
+            Robot robot = new Robot(new Manoire());
             int[] p = { 0, 0 };
             robot.Position = p;
             room[,] exemple = new room[2, 2];
@@ -66,14 +54,13 @@ namespace IA_TP1
             verif = Console.ReadLine();    //Console attend enter avant de fermer 
         }
 
-        private void test2(room[,] rooms)
+        private void SetSalle(room[,] rooms)
         {
-            int k = 0;
             for (int i = 0; i < rooms.GetLength(0); i++)
             {
                 for (int j = 0; j < rooms.GetLength(1); j++)
                 {
-                    if (rooms[i, j].hasDirt && rooms[i, j].hasBijoux) tableLayoutPanel1.GetControlFromPosition(i, j).BackColor = Color.Black;
+                    if (rooms[i, j].hasDirt && rooms[i, j].hasBijoux) tableLayoutPanel1.GetControlFromPosition(i, j).BackColor = Color.DarkViolet;
                     else if (rooms[i, j].hasBijoux) tableLayoutPanel1.GetControlFromPosition(i, j).BackColor = Color.Blue;
                     else if (rooms[i, j].hasDirt) tableLayoutPanel1.GetControlFromPosition(i, j).BackColor = Color.Red;
                     else tableLayoutPanel1.GetControlFromPosition(i, j).BackColor = Color.White;
@@ -81,35 +68,23 @@ namespace IA_TP1
             }
         }
 
-        public void boucleTest()
+        private void printRobot()
         {
-            long lastDate = DateTime.Now.Ticks;
-
-            while (true)
-            {
-                if (DateTime.Now.Ticks - lastDate > 2 * TimeSpan.TicksPerSecond)
-                {
-                    miseAJourR(exemple);
-                }
-                if (DateTime.Now.Ticks - lastDate > 1 * TimeSpan.TicksPerSecond)
-                {
-                    test2(exemple);
-                }
-                lastDate = DateTime.Now.Ticks;
-            }
+            tableLayoutPanel1.GetControlFromPosition(posRob[0], posRob[1]).Text = "";
+            Program.robot.Position.CopyTo(posRob, 0);
+            tableLayoutPanel1.GetControlFromPosition(posRob[0], posRob[1]).Text = "X";
         }
 
-        private void miseAJourR(room[,] rooms)
+        private void refresh_Click(object sender, EventArgs e)
         {
-            Random rand = new Random();
-            for (int i = 0; i < rooms.GetLength(0); i++)
-            {
-                for (int j = 0; j < rooms.GetLength(1); j++)
-                {
-                    if(rooms[i, j].hasDirt = rand.Next() % 2 == 0) rooms[i,j].hasDirt=!rooms[i,j].hasDirt;
-                    if(rooms[i, j].hasBijoux = rand.Next() % 3 == 0) rooms[i,j].hasBijoux=!rooms[i,j].hasBijoux;
-                }
-            }
+            SetSalle(Program.theManoire.getState());
+            printRobot();
+        }
+
+        private void autoRefresh(object sender, EventArgs e)
+        {
+            SetSalle(Program.theManoire.getState());
+            printRobot();
         }
     }
 }
