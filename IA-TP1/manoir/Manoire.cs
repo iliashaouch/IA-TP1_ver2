@@ -4,48 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IA_TP1
+namespace IA_TP1.manoir
 {
+
     public struct room
     {
         public bool hasDirt;
         public bool hasBijoux;
     }
 
-    class Salle
-    {
-        private bool dirt = false;
-        private bool bijoux = false;
-
-        public Salle()
-        {
-
-        }
-
-        public bool getDirt
-        {
-            get => dirt;
-        }
-        public bool getBijoux
-        {
-            get => bijoux;
-        }
-        public void setDirt(bool val)
-        {
-            dirt = val;
-        }
-        public void setBijoux(bool val)
-        {
-            bijoux = val;
-        }
-        override public string ToString()
-        {
-            return "bijoux: " + bijoux + ", dirt: " + dirt;
-        }
-    }
     class Manoire
     {
         private Salle[,] salles = new Salle[5, 5];
+        private UInt16 nbBijouxAspires = 0;
+
 
         public Manoire()
         {
@@ -57,7 +29,11 @@ namespace IA_TP1
         }
 
         internal Salle[,] Salles { get => salles; set => salles = value; }
+        public ushort NbBijouxAspires { get => nbBijouxAspires; set => nbBijouxAspires = value; }
 
+        // La fonction "createObject" choisis un nombre puis un tableau de deux entiers au hasard, le premier nombre indique, selon sa valeur
+        // si une saleté (si il est pair) ou un bijou (si il est égale à 1) sera généré dans une salle (dont la position est déterminé
+        // par le tableau d'entiers) 
         public void createObject()
         {
             Random rand = new Random();
@@ -74,15 +50,35 @@ namespace IA_TP1
             }
         }
 
+        // La fonction "cleanRoom" prend en paramètre un tableau d'entier représentant  la position d'une salle qu'elle nettoie (elle la vide de 
+        // saleté et de bijou et si il y avait des bijoux dans cette salle elle incrémente "nbBijouxAspires", un compteur de bijoux aspiré
         public void cleanRoom(int[] s)
         {
+            if (salles[s[0], s[1]].getBijoux) { ++nbBijouxAspires; }
+
             salles[s[0], s[1]].setBijoux(false);
             salles[s[0], s[1]].setDirt(false);
         }
 
+        // La fonction "ramassageBijoux" prend en paramètre un tableau d'entier représentant  la position d'une salle qu'elle vide de bijoux 
         public void ramassageBijoux(int[] s)
         {
             salles[s[0], s[1]].setBijoux(false);
+        }
+
+        // la fonction "getState" rend un tableau de pièce correspondant à l'état actuel du manoir
+        public room[,] getState()
+        {
+            room[,] rooms = new room[5, 5];
+            for (int i = 0; i < salles.GetLength(0); i++)
+            {
+                for (int j = 0; j < salles.GetLength(1); j++)
+                {
+                    rooms[i, j].hasDirt = salles[i, j].getDirt;
+                    rooms[i, j].hasBijoux = salles[i, j].getBijoux;
+                }
+            }
+            return rooms;
         }
 
         public override string ToString()
@@ -97,20 +93,6 @@ namespace IA_TP1
                 retour += "\n";
             }
             return retour;
-        }
-
-        public room[,] getState()
-        {
-            room[,] rooms = new room[5, 5];
-            for (int i = 0; i < salles.GetLength(0); i++)
-            {
-                for (int j = 0; j < salles.GetLength(1); j++)
-                {
-                    rooms[i, j].hasDirt = salles[i, j].getDirt;
-                    rooms[i, j].hasBijoux = salles[i, j].getBijoux;
-                }
-            }
-            return rooms;
         }
 
     }
