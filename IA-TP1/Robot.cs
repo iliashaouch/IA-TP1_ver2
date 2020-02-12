@@ -377,7 +377,7 @@ namespace IA_TP1
             return actions;
         }
 
-        // La fonction "execActions" prend en paramètre une série d'action et les exécutes en communiquant avec les fonction de la classe "effecteur"
+        // La fonction "execActions" prend en paramètre une série d'actions et les exécute en communiquant avec les fonction de la classe "effecteur"
         void execActions(string strActions)
         {
             foreach (char action in strActions)
@@ -411,6 +411,7 @@ namespace IA_TP1
             m_manoir = manoir;
         }
 
+        // La fonction "captureEnv" rend l'état actuel du manoir
         public room[,] captureEnv()
         {
             return m_manoir.getState();
@@ -426,16 +427,19 @@ namespace IA_TP1
             m_manoir = manoir;
         }
 
+        // la fonction "aspirer" appelle la fonction "cleanRoom" du manoir à la position entrée. Cette fonction du manoir retire les saleté et bijoux de la salle indiquée 
         public void aspirer(int[] pos)
         {
             m_manoir.cleanRoom(pos);
         }
 
+        // la fonction "ramasser" appelle la fonction "cleanRoom" du manoir à la position entrée. Cette fonction du manoir retire les bijoux de la salle indiquée 
         public void ramasser(int[] pos)
         {
             m_manoir.ramassageBijoux(pos);
         }
 
+        // la fonction "deplacer" prend en paramètre une action (bas, haut, gauche ou droite) et change la position du robot 
         public int[] deplacer(char action, int[] pos)
         {
             switch (action)
