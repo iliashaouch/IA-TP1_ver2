@@ -390,7 +390,7 @@
             this.countBijoux.Name = "countBijoux";
             this.countBijoux.Size = new System.Drawing.Size(117, 95);
             this.countBijoux.TabIndex = 1;
-            this.countBijoux.Text = "Nombre de Bijoux Aspirés:\r\n -3 bijou(x) aspiré(s)";
+            this.countBijoux.Text = "Nombre de Bijoux Aspirés:\r\n  bijou(x) aspiré(s)";
             this.countBijoux.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // Form1

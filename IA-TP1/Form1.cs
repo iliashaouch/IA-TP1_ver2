@@ -72,9 +72,9 @@ namespace IA_TP1
         /// </summary>
         private void printNbBijoux()
         {
-            string[] s = countBijoux.Text.Split('-');
+            string[] s = countBijoux.Text.Split('\n');
             string[] s2 = s[1].Split(' ');
-            countBijoux.Text = s[0] + "-" + Program.theManoire.NbBijouxAspires.ToString() + " " + s2[1] + " " + s2[2];
+            countBijoux.Text = s[0] + "\n" + Program.theManoire.NbBijouxAspires.ToString() + " " + s2[1] + " " + s2[2];
         }
 
         /// <summary>
