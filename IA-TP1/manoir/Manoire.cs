@@ -29,6 +29,7 @@ namespace IA_TP1.manoir
         }
 
         internal Salle[,] Salles { get => salles; set => salles = value; }
+        public ushort NbBijouxAspires { get => nbBijouxAspires; set => nbBijouxAspires = value; }
 
         // La fonction "createObject" choisis un nombre puis un tableau de deux entiers au hasard, le premier nombre indique, selon sa valeur
         // si une saleté (si il est pair) ou un bijou (si il est égale à 1) sera généré dans une salle (dont la position est déterminé

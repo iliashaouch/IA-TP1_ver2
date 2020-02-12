@@ -21,7 +21,7 @@ namespace IA_TP1
             InitializeComponent(); //creation du Form (auto-genere)
 
             //affichage de la situation initiale
-            Program.robot.Position.CopyTo(posRob,0);
+            Program.robot.Position.CopyTo(posRob, 0);
             printRobot();
             SetSalle(Program.theManoire.getState());
 
@@ -67,15 +67,11 @@ namespace IA_TP1
             tableLayoutPanel1.GetControlFromPosition(posRob[0], posRob[1]).Text = "X"; //print
         }
 
-        /// <summary>
-        /// refresh manuel via le bouton
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void refresh_Click(object sender, EventArgs e)
+        private void printNbBijoux()
         {
-            SetSalle(Program.theManoire.getState());
-            printRobot();
+            string[] s = countBijoux.Text.Split('-');
+            string[] s2 = s[1].Split(' ');
+            countBijoux.Text = s[0] + "-" + Program.theManoire.NbBijouxAspires.ToString() + " " + s2[1] + " " + s2[2];
         }
 
         /// <summary>
@@ -87,6 +83,7 @@ namespace IA_TP1
         {
             SetSalle(Program.theManoire.getState());
             printRobot();
+            printNbBijoux();
         }
     }
 }
