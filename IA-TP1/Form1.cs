@@ -67,6 +67,9 @@ namespace IA_TP1
             tableLayoutPanel1.GetControlFromPosition(posRob[0], posRob[1]).Text = "X"; //print
         }
 
+        /// <summary>
+        /// modifie l'affichage du nombre de bijoux aspires par accidents
+        /// </summary>
         private void printNbBijoux()
         {
             string[] s = countBijoux.Text.Split('-');
