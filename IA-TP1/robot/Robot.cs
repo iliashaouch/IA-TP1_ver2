@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IA_TP1.robot;
+using IA_TP1.manoir;
 
 namespace IA_TP1
 {
@@ -27,7 +29,6 @@ namespace IA_TP1
         private room[,] memoire;
         private capteur c;
         private effecteur e;
-        private int conso;
         private Manoire m_manoir;
         private string actionsList;
 
@@ -67,8 +68,6 @@ namespace IA_TP1
                 execActions(actionsList);
             }
         }
-
-
 
         public room[,] Memoire { get => memoire; set => memoire = value; }
         public int[] Position { get => position; set => position = value; }
@@ -116,6 +115,35 @@ namespace IA_TP1
         public int findHeuristic(noeud n)
         {
             return (n.bijouLeft.Count + n.dirtLeft.Count);
+        }
+
+        // La fonction "listContains" prend en paramètre une liste de tableaux d'entier et un tableau d'entier et rend "true" si la liste contient 
+        // ce tableau et "false" dans le cas contraire
+        public bool listContains(List<int[]> l, int[] pos)
+        {
+            foreach (int[] e in l)
+            {
+                if (e[0] == pos[0] && e[1] == pos[1])
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // La fonction "listRemove" prend en paramètre une liste de tableaux d'entier et un tableau d'entier et supprime ce tableau de la liste à sa première apparition
+        public void listRemove(List<int[]> l, int[] pos)
+        {
+            int a = 0;
+            for (int i = 0; i < l.Count; i++)
+            {
+                if (l[i][0] == pos[0] && l[i][1] == pos[1])
+                {
+                    a = i;
+                    break;
+                }
+            }
+            l.RemoveAt(a);
         }
 
         // La fonction "AStarSearch" rend la série d'actions à effectuer par le robot pour nettoyer le manoire, elle la trouve en utiisant l'algorithme A*
@@ -199,35 +227,6 @@ namespace IA_TP1
             // une fois que l'on a trouvé une bonne solution on rend la liste d'actions correspondant
             return (graph[0].actions);
         }
-
-        // La fonction "listContains" prend en paramètre une liste de tableaux d'entier et un tableau d'entier et rend "true" si la liste contient 
-        // ce tableau et "false" dans le cas contraire
-        public bool listContains(List<int[]> l, int[] pos)
-        {
-            foreach (int[] e in l){
-                if (e[0]==pos[0] && e[1] == pos[1])
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        // La fonction "listRemove" prend en paramètre une liste de tableaux d'entier et un tableau d'entier et supprime ce tableau de la liste à sa première apparition
-        public void listRemove(List<int[]> l, int[] pos)
-        {
-            int a = 0;
-            for (int i=0; i<l.Count;i++)
-            {
-                if (l[i][0] == pos[0] && l[i][1] == pos[1])
-                {
-                    a = i;
-                    break;
-                }
-            }
-            l.RemoveAt(a);
-        }
-
 
         // La fonction "Search" rend la série d'actions à effectuer par le robot pour nettoyer le manoire, elle la trouve en utiisant 
         // l'algorithme BFS (Breadth First Search)
@@ -399,65 +398,6 @@ namespace IA_TP1
                         break;
                 }
             }
-        }
-
-    }
-    class capteur
-    {
-        private Manoire m_manoir;
-
-        public capteur(Manoire manoir)
-        {
-            m_manoir = manoir;
-        }
-
-        // La fonction "captureEnv" rend l'état actuel du manoir
-        public room[,] captureEnv()
-        {
-            return m_manoir.getState();
-        }
-    }
-
-    class effecteur
-    {
-        private Manoire m_manoir;
-
-        public effecteur(Manoire manoir)
-        {
-            m_manoir = manoir;
-        }
-
-        // la fonction "aspirer" appelle la fonction "cleanRoom" du manoir à la position entrée. Cette fonction du manoir retire les saleté et bijoux de la salle indiquée 
-        public void aspirer(int[] pos)
-        {
-            m_manoir.cleanRoom(pos);
-        }
-
-        // la fonction "ramasser" appelle la fonction "cleanRoom" du manoir à la position entrée. Cette fonction du manoir retire les bijoux de la salle indiquée 
-        public void ramasser(int[] pos)
-        {
-            m_manoir.ramassageBijoux(pos);
-        }
-
-        // la fonction "deplacer" prend en paramètre une action (bas, haut, gauche ou droite) et change la position du robot 
-        public int[] deplacer(char action, int[] pos)
-        {
-            switch (action)
-            {
-                case 'b':
-                    pos[0] += 1;
-                    break;
-                case 'h':
-                    pos[0] -= 1;
-                    break;
-                case 'g':
-                    pos[1] -= 1;
-                    break;
-                case 'd':
-                    pos[1] += 1;
-                    break;
-            }
-            return pos;
         }
     }
 }

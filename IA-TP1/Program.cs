@@ -5,6 +5,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
+using IA_TP1.robot;
+using IA_TP1.manoir;
 
 namespace IA_TP1
 {

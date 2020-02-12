@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using IA_TP1.robot;
+using IA_TP1.manoir;
 
 namespace IA_TP1
 {
